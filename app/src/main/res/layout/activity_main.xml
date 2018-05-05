@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/Layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/blue">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="700dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="60dp"
+            android:text="fingertip!"
+            android:textColor="#53A4AD"
+            android:textSize="70dp"
+            android:textStyle="bold|italic"
+            android:shadowColor="#B0C9D9"
+            android:shadowDx="10"
+            android:shadowDy="7"
+            android:shadowRadius="10"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp" >
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_border"
+            android:textColor="#000000"
+            android:ems="10"
+            android:hint="이름을 입력해주세요."
+            android:textColorHint="#A8A8A8" />
+
+        <Button
+            android:id="@+id/makeDB"
+            android:layout_width="80dp"
+            android:layout_height="27dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/button_color"
+            android:text="sign in"
+            android:textColor="#FFFFFF"
+            android:textSize="15dp" />
+    </LinearLayout>
+</LinearLayout>
