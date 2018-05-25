@@ -1,14 +1,13 @@
 package com.example.user.fingertips;
 
 import android.Manifest;
-import android.content.SharedPreferences;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -48,12 +47,8 @@ import com.example.user.fingertips.db.RawClickGapData;
 import com.example.user.fingertips.db.RawPointData;
 import com.example.user.fingertips.db.RawPointRepo;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -101,14 +96,10 @@ public class TouchWebView extends AppCompatActivity implements View.OnTouchListe
     private Button go;
     private ImageButton logout;
 
+
     DBHelper dbHelper;
     InputDataFeatures inputData;
 
-    private String path;
-    private String currentTime;
-    private String Traing_name;
-    private String Test_name;
-    private String result;
     @Override
     protected void onCreate(Bundle SavedInstanceState) {
         super.onCreate(SavedInstanceState);
@@ -200,7 +191,7 @@ public class TouchWebView extends AppCompatActivity implements View.OnTouchListe
         });
 
         logout = (ImageButton) findViewById(R.id.log);
-        logout.setOnClickListener(new View.OnClickListener() {
+        logout.setOnClickListener(new View.OnClickListener() {    //옷 추가 이미지버튼
             @Override
             public void onClick(View v) {
 
@@ -211,172 +202,11 @@ public class TouchWebView extends AppCompatActivity implements View.OnTouchListe
                     Intent go_intent;
 
                     @Override
-                    public boolean onMenuItemClick(MenuItem item) { //메뉴아이템 클릭시
+                    public boolean onMenuItemClick(MenuItem item) { //메뉴아이템 클릭시 해당 액티비티시작
                         switch (item.getItemId()) {
                             case R.id.logout:
                                 go_intent = new Intent(TouchWebView.this, MainActivity.class);
                                 startActivity(go_intent);
-                                return true;
-                            case R.id.end_test:
-                                ExportDB();
-                                Traing_name = path+"/gogo.csv";
-                                Test_name = path+"/"+CSV_NAME+currentTime+".csv";
-                                Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@path : "+Test_name);
-
-                                int up_TP = 0, up_TN = 0, up_FP = 0, up_FN = 0;
-                                int first = 0, first2 = 0;
-                                double[][] train_data = new double[2000][7];
-                                double[][] test_data = new double[2000][7];
-
-                                double train_count = 0;
-                                double test_count = 0;
-
-                                double[][] for_train = new double[2000][7];
-                                double[][] for_test = new double[2000][7];
-                                int train_offset = 0;
-                                int test_offset = 0;
-
-                                int[] train_label = new int[2000];
-                                int[] test_label = new int[2000];
-
-                                int z=0, j=0;
-                                try {
-                                    //@@@@@@@@@@@@@@@@train
-                                    File csvfile = new File(Traing_name);
-                                    String line = "";
-                                    String cvsSplit = ",";
-                                    int row =0, i;
-                                    BufferedReader br = new BufferedReader(new FileReader(csvfile));
-                                    while ((line = br.readLine()) != null) {
-                                        if(first==0){
-                                            first++;
-                                            continue;
-                                        }
-                                        // -1 옵션은 마지막 "," 이후 빈 공백도 읽기 위한 옵션
-                                        String[] token = line.split(cvsSplit);
-                                        Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@line!! : "+line);
-                                        Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@token!! : "+token);
-                                        Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@18!! : "+Double.parseDouble(token[18].split("\"")[1]));
-                                        Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@17!! : "+token[3].split("\"")[1]);
-
-                                        if(token[3].split("\"")[1].equals("SWIPE UP")){
-                                            train_data[row][0] = Double.parseDouble(token[4].split("\"")[1]);
-                                            train_data[row][1] = Double.parseDouble(token[5].split("\"")[1]);
-                                            train_data[row][2] = Double.parseDouble(token[7].split("\"")[1]);
-                                            train_data[row][3] = Double.parseDouble(token[8].split("\"")[1]);
-                                            train_data[row][4] = Double.parseDouble(token[16].split("\"")[1]);
-                                            train_data[row][5] = Double.parseDouble(token[17].split("\"")[1]);
-                                            train_data[row][6] = Double.parseDouble(token[18].split("\"")[1]);
-                                            row++;
-                                            System.out.println("train_data[row][6]");
-                                            Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22!! : "+Double.parseDouble(token[18].split("\"")[1]));
-                                        }
-                                        // CSV에서 읽어 배열에 옮긴 자료 확인하기 위한 출력
-                                       // for(i=0;i<6;i++)    System.out.print(train_data[row][i] + ",");
-                                        //System.out.println("");
-                                    }
-                                    br.close();
-                                    //@@@@@@train data complete
-                                    Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@p!! : "+train_data);
-
-                                    train_count = row;
-                                    for(i=0;i<train_count;i++){
-                                        if(i<(train_count/5)*4){
-                                            for(j=0;j<7;j++){
-                                                for_train[train_offset][j] = train_data[i][j];
-                                            }
-                                            train_label[train_offset] = 1;
-                                            train_offset++;
-                                        }
-                                        else{
-                                            for(j=0;j<7;j++){
-                                                for_test[test_offset][j] = train_data[i][j];
-                                            }
-                                            test_label[test_offset] = 1;
-                                            test_offset++;
-                                        }
-                                    }
-
-                                    //@@@@@@@@@test data
-                                    File test_csvfile = new File(Test_name);
-                                    row =0;
-                                    BufferedReader test_br = new BufferedReader(new FileReader(test_csvfile));
-                                    while ((line = test_br.readLine()) != null) { //@@@@@@@@@@@@@@@@train
-                                        // -1 옵션은 마지막 "," 이후 빈 공백도 읽기 위한 옵션
-                                        if(first2==0){
-                                            first2++;
-                                            continue;
-                                        }
-                                        String[] token = line.split(",");
-                                        if(token[3].split("\"")[1].equals("SWIPE UP")){
-                                            test_data[row][0] = Double.parseDouble(token[4].split("\"")[1]);
-                                            test_data[row][1] = Double.parseDouble(token[5].split("\"")[1]);
-                                            test_data[row][2] = Double.parseDouble(token[7].split("\"")[1]);
-                                            test_data[row][3] = Double.parseDouble(token[8].split("\"")[1]);
-                                            test_data[row][4] = Double.parseDouble(token[16].split("\"")[1]);
-                                            test_data[row][5] = Double.parseDouble(token[17].split("\"")[1]);
-                                            test_data[row][6] = Double.parseDouble(token[18].split("\"")[1]);
-                                            row++;
-                                        }
-                                        // CSV에서 읽어 배열에 옮긴 자료 확인하기 위한 출력
-                                        // for(i=0;i<6;i++)    System.out.print(train_data[row][i] + ",");
-                                        //System.out.println("");
-                                    }
-                                    test_br.close();
-
-                                    test_count = row;
-
-                                    for(i=0;i<test_count;i++){
-                                        if(i<(test_count/5)*4){
-                                            for(j=0;j<7;j++){
-                                                for_train[train_offset][j] = test_data[i][j];
-                                            }
-                                            train_label[train_offset] = 2;
-                                            train_offset++;
-                                        }
-                                        else{
-                                            for(j=0;j<7;j++){
-                                                for_test[test_offset][j] = test_data[i][j];
-                                            }
-                                            test_label[test_offset] = 2;
-                                            test_offset++;
-                                        }
-                                    }
-                                    // 데이터 분리 트레이닝=80% 테스트=20%
-
-                                    for_train = nomalization(for_train);
-                                    for_test = nomalization(for_test);
-                                    //nomalization 완료
-                                    int index = 0;
-                                    for(j=0;j<test_offset;j++){
-                                        index = euclidian(for_train,for_test[j]);
-                                        if(test_label[j]==1 && train_label[index]==1) up_TP++;
-                                        else if(test_label[j]==1 && train_label[index]==2) up_FP++;
-                                        else if(test_label[j]==2 && train_label[index]==1) up_FN++;
-                                        else if(test_label[j]==2 && train_label[index]==2) up_TN++;
-                                    }
-
-                                } catch (FileNotFoundException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                } catch (IOException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
-                                }
-
-                                Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@6 : "+up_TP+" "+up_FN+" "+up_FP+" "+up_TN);
-                                double under = (double)up_TP+up_FN;
-
-                                double TPR = (double)up_TP/under;
-                                Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@67 : "+TPR);
-
-                                if(TPR*100 <70){
-                                    result = "인증 성공!";
-                                }
-                                else
-                                    result = "인증 실패!" ;
-
-                                openOptionsDialog();
                                 return true;
                         }
                         return false;
@@ -401,86 +231,6 @@ public class TouchWebView extends AppCompatActivity implements View.OnTouchListe
         Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
         startActivityForResult(intent, 1000);
     }
-    private int euclidian(double[][]train, double[]test){
-        int index_num = 0;
-        int i,j;
-        double temp = 0;
-        double distance = 0;
-        for(i=0;i<train.length;i++){
-            temp = Math.sqrt( Math.pow(train[i][0]-test[0],2) + Math.pow(train[i][1]-test[1],2) + Math.pow(train[i][2]-test[2],2) + Math.pow(train[i][3]-test[3],2) + Math.pow(train[i][4]-test[4],2)
-                    + Math.pow(train[i][5]-test[5],2) + Math.pow(train[i][6]-test[6],2) );
-            if(i==0) distance = temp;
-            else if ( distance > temp){
-                distance = temp;
-                index_num = i;
-            }
-        }
-        return index_num;
-    }
-    private double[] mean(double[][]data){
-        double[] ret = new double[7];
-        int i;
-
-        for(i=0;i<data.length;i++){
-            ret[0] += data[i][0];
-            ret[1] += data[i][1];
-            ret[2] += data[i][2];
-            ret[3] += data[i][3];
-            ret[4] += data[i][4];
-            ret[5] += data[i][5];
-            ret[6] += data[i][6];
-        }
-        ret[0] = ret[0]/data.length;
-        ret[1] = ret[1]/data.length;
-        ret[2] = ret[2]/data.length;
-        ret[3] = ret[3]/data.length;
-        ret[4] = ret[4]/data.length;
-        ret[5] = ret[5]/data.length;
-        ret[6] = ret[6]/data.length;
-        return ret;
-    }
-    private double[] std(double[][]data){
-        double[] sum = new double[7];
-        double[] result = new double[7];
-        double diff;
-        double[] meanValue = mean(data);
-        for (int i = 0; i < data.length; i++) {
-            for(int j=0;j<7;j++){
-                diff = data[i][j] - meanValue[j];
-                sum[j] += diff * diff;
-            }
-        }
-        for(int k=0;k<7;k++){
-            result[k] = Math.sqrt(sum[k] / (double)(data.length - 1));
-        }
-        return result;
-    }
-
-    private double[][] nomalization(double[][]data){
-        double[][] result = new double[2000][7];
-        double[] mean_set = mean(data);
-        double[] std_set = std(data);
-        for (int i = 0; i < data.length; i++) {
-            for(int j=0; j<7;j++){
-                result[i][j] = (data[i][j]-mean_set[j])/std_set[j];
-            }
-        }
-        return result;
-    }
-
-
-    private void openOptionsDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("테스트종료")
-                .setMessage(result)
-                .setPositiveButton(R.string.str_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(
-                                    DialogInterface dialoginterface, int i) {
-                            }
-                        }).show();
-    }
-
 
     public void AppPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -800,9 +550,9 @@ Log.d(TAG, "GIT TEST");
     }
 
     private void ExportDB(){
-        currentTime = getCurrentTime();
+        String currentTime = getCurrentTime();
         AppPermission();
-        path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
         path += "/KW_FingerTip";
         File exportDir = new File(path);
         if(!exportDir.exists()) exportDir.mkdir();
@@ -888,7 +638,6 @@ Log.d(TAG, "GIT TEST");
     }
 
     private class WebViewClientClass extends WebViewClient {
-        @TargetApi(21)
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
@@ -898,7 +647,6 @@ Log.d(TAG, "GIT TEST");
                 DB_Url = Swipe.changeURL(url);
                 Log.d(TAG, "DB_URL : " + DB_Url);
             }
-
             edit_Url.setText(url);
             if (request.isRedirect()) {
                 view.loadUrl(url);
