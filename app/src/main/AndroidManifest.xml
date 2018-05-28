@@ -20,15 +20,6 @@
         <activity android:name=".TouchWebView"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:windowSoftInputMode="adjustResize|adjustPan" />
-        <service android:name=".RecordService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:enabled="true" >
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data android:name="android.myAccessibilityService"
-                android:resource="@xml/accessibility_service_config" />
-        </service>
         <activity android:name=".SplashActivity"
             android:screenOrientation="portrait" >
             <intent-filter>
