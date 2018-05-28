@@ -2,10 +2,7 @@ package com.example.user.fingertips;
 
 import android.Manifest;
 import android.content.SharedPreferences;
-import android.accessibilityservice.AccessibilityService;
-import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.TargetApi;
-import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -72,7 +69,6 @@ public class TouchWebView extends AppCompatActivity implements View.OnTouchListe
     private WebView mWebView;
     private WebSettings settings;
     private String current_Url;
-    public RecordService me;
 
     private SharedPreferences user_name, URL;
     private SharedPreferences.Editor editor;
@@ -150,8 +146,6 @@ public class TouchWebView extends AppCompatActivity implements View.OnTouchListe
         editor.putString("Here", mWebView.getUrl());
         editor.apply();
         current_Url = mWebView.getUrl();
-        me = new RecordService();
-        me.onServiceConnected();
         edit_Url = (EditText) findViewById(R.id.url);
         edit_Url.setOnKeyListener(new View.OnKeyListener() {
 
@@ -321,7 +315,7 @@ public class TouchWebView extends AppCompatActivity implements View.OnTouchListe
                                         // CSV에서 읽어 배열에 옮긴 자료 확인하기 위한 출력
                                         // for(i=0;i<6;i++)    System.out.print(train_data[row][i] + ",");
                                         //System.out.println("");
-                                    }
+                                    }   //
                                     test_br.close();
 
                                     test_count = row;
@@ -370,7 +364,7 @@ public class TouchWebView extends AppCompatActivity implements View.OnTouchListe
                                 double TPR = (double)up_TP/under;
                                 Log.d(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@67 : "+TPR);
 
-                                if(TPR*100 <70){
+                                if(TPR*100 <80){
                                     result = "인증 성공!";
                                 }
                                 else
@@ -385,21 +379,6 @@ public class TouchWebView extends AppCompatActivity implements View.OnTouchListe
                 p.show();
             }
         });
-
-
-        AccessibilityManager acceMng = (AccessibilityManager) getSystemService(Service.ACCESSIBILITY_SERVICE);
-        List<AccessibilityServiceInfo> list = acceMng.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
-
-        for (int i = 0; i < list.size(); i++) {
-            AccessibilityServiceInfo info = list.get(i);
-            if (info.getResolveInfo().serviceInfo.packageName.equals(getApplication().getPackageName()))
-                return;
-        }
-
-        Toast.makeText(getApplicationContext(), "접근성 권한 설정", Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        startActivityForResult(intent, 1000);
     }
     private int euclidian(double[][]train, double[]test){
         int index_num = 0;
