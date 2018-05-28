@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">핑거팁</string>
-    <string name="accessibility_description">접근성 권한을 필요로 합니다.</string>
     <string name="ok">인증 성공!</string>
     <string name="fail">인증 실패!</string>
     <string name="str_ok">OK</string>
